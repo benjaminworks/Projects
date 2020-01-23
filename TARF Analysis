@@ -1,66 +1,3 @@
-
-
-Skip to content
-Using Gmail with screen readers
-Enable desktop notifications for Gmail.
-   OK  No thanks
-
-16 of 32
-.txt examples
-Inbox
-x
-
-Works, Benjamin <Benjamin.Works@fenics.com>
-Attachments
-Dec 13, 2019, 1:10 PM
-to me
-
-A few examples for reference of scripts I’ve written.
-
- 
-
-____________________________________________
-
-Ben Works
-Head of Client Services, Americas
-
-55 Water St. 10th Floor
-Direct Line      +1 212 968 2839
-
-Support Line   +1 212 968 2935
-
- 
-
-kACE_Fenics_MD_email_signature_2018
-
- 
-
-4 Attachments
-
-Works, Benjamin <Benjamin.Works@fenics.com>
-Attachments
-Dec 13, 2019, 1:23 PM
-to me
-
-This too
-
- 
-
-____________________________________________
-
-Ben Works
-Head of Client Services, Americas
-
-55 Water St. 10th Floor
-Direct Line      +1 212 968 2839
-
-Support Line   +1 212 968 2935
-
- 
-
-
-Attachments area
-
 drop table if exists schedules_update;
 drop table if exists distinct_tickets;
 
@@ -90,5 +27,3 @@ insert into fendb.schedules select * from schedules_update order by ticketnumber
 
 drop table schedules_update;
 drop table distinct_tickets;
-TARFUpdate.txt
-Displaying TARFUpdate.txt.
