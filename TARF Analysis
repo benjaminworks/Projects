@@ -1,0 +1,94 @@
+
+
+Skip to content
+Using Gmail with screen readers
+Enable desktop notifications for Gmail.
+   OK  No thanks
+
+16 of 32
+.txt examples
+Inbox
+x
+
+Works, Benjamin <Benjamin.Works@fenics.com>
+Attachments
+Dec 13, 2019, 1:10 PM
+to me
+
+A few examples for reference of scripts I’ve written.
+
+ 
+
+____________________________________________
+
+Ben Works
+Head of Client Services, Americas
+
+55 Water St. 10th Floor
+Direct Line      +1 212 968 2839
+
+Support Line   +1 212 968 2935
+
+ 
+
+kACE_Fenics_MD_email_signature_2018
+
+ 
+
+4 Attachments
+
+Works, Benjamin <Benjamin.Works@fenics.com>
+Attachments
+Dec 13, 2019, 1:23 PM
+to me
+
+This too
+
+ 
+
+____________________________________________
+
+Ben Works
+Head of Client Services, Americas
+
+55 Water St. 10th Floor
+Direct Line      +1 212 968 2839
+
+Support Line   +1 212 968 2935
+
+ 
+
+
+Attachments area
+
+drop table if exists schedules_update;
+drop table if exists distinct_tickets;
+
+create temporary table schedules_update as select * from fendb.schedules limit 0;
+create temporary table distinct_tickets(
+	select distinct fendb.tickets.ticketnumber from fendb.tickets, fendb.schedules
+			where fendb.tickets.status = 'Open'
+			and fendb.tickets.Instrument in ('TARF.Vanilla','TARF.EuropeanKnockin','TARF.VariableStrike','TARF.Pivot')
+			and fendb.tickets.ticketnumber = fendb.schedules.ticketnumber
+			and skejisoptionchecked = 0
+			and cutId=39);
+
+
+insert into schedules_update
+	select * from fendb.schedules 
+		where fendb.schedules.ticketnumber in (select ticketnumber from distinct_tickets)
+		and right(fendb.schedules.skejdate,8)='23:00:00';
+
+update schedules_update
+	set skejdate = date_add(skejdate, interval 1 hour);
+    
+delete from fendb.schedules 
+	where fendb.schedules.ticketnumber in (select ticketnumber from distinct_tickets)
+		and right(fendb.schedules.skejdate,8)='23:00:00';
+
+insert into fendb.schedules select * from schedules_update order by ticketnumber;
+
+drop table schedules_update;
+drop table distinct_tickets;
+TARFUpdate.txt
+Displaying TARFUpdate.txt.
