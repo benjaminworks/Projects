@@ -1,0 +1,21 @@
+SELECT ticketnumber into #no_path
+FROM consolidateddb.tickets
+WHERE instrument='STRUCTURED.AccumulatorTwo';
+
+
+alter table #no_path add isHidden tinyint;
+alter table #no_path add entity varchar(255);
+alter table #no_path add fieldname varchar(255);
+alter table #no_path add bid float;
+alter table #no_path add ask float;
+alter table #no_path add string varchar(255);
+
+update #no_path set ishidden=0,entity='b62ef6a8-69ad-102b-abf5-d52d5f5692da',fieldname='STRUCTURED.RefNumPaths',bid=2000,ask=2000;
+
+
+insert into consolidateddb.fdkticketfields 
+       select * from #no_path 
+       except
+       select * from wubs1.consolidateddb.fdkticketfields;
+  
+DROP TABLE #no_path;
