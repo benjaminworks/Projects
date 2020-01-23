@@ -1,0 +1,55 @@
+Public Sub putmessage(ticket As String, success As Integer, response_message As String)
+    '==================================================
+    'In this sub routine, we open an existing queue
+    'retrieve the message and print to debug window.
+    '==================================================
+    'Enable the error handler
+    On Error GoTo SendQueueMessage_Err
+    'Declare variables for MSMQ objects.
+    'Dim xd as New xmldocument() xd.Load("c:\WUBS\response.xml")
+    Dim oQInfo As MSMQ.MSMQQueueInfo
+    Dim oQueue As MSMQ.MSMQQueue
+    Dim oMessage As MSMQ.MSMQMessage
+        'Initialize the MSMQQueueInfo object.
+    Set oQInfo = New MSMQQueueInfo
+        'we use a conditional compilation constant
+    oQInfo.PathName = "55-fen-vm12\private$\WUBSin2"
+        'Open the queue for receive access.
+    Set oQueue = oQInfo.Open(MQ_SEND_ACCESS, MQ_DENY_NONE)
+        'If the queue is opened successfully, we send a testing messge to it.
+    If oQueue.IsOpen Then
+        'Initialize the MSMQMessage object.
+        Set oMessage = New MSMQMessage
+        'Prepare the message and send to the queue.
+        oMessage.Label = ticket
+        oMessage.Priority = 3
+        oMessage.Body = "<?xml version=" & Chr(34) & "1.0" & Chr(34) & " encoding=" & Chr(34) & "utf-8" & Chr(34) & "?><FenicsTicketResponseType><RecordID>" & ticket & "</RecordID><StatusID>" & success & "</StatusID><Description>" & response_message & "</Description></FenicsTicketResponseType>"
+        oMessage.Send oQueue
+    Else
+        'Queue is not open, report the error and get out.
+'        MsgBox “The queue is not open!”
+        Exit Sub
+    End If
+        'If everything is ok, close the queue and get out.
+    oQueue.Close
+'    MsgBox(“The message is sent!")
+    Exit Sub
+SendQueueMessage_Err:
+        'If the queue already exist when we try to create it, '
+        'ignore the error and move on.
+    If Err.Number = MQ_ERROR_QUEUE_EXISTS Then
+    Resume Next
+    End If
+        'Handling other errors.
+    MsgBox Err.Description
+End Sub
+
+Public Function sendresponse(ticket As String, success As Integer, response_message As String)
+
+Dim temporary As String
+
+putmessage ticket, success, response_message
+
+sendresponse = "Sent details for trade " & ticket & "."
+
+End Function
