@@ -1,297 +1,591 @@
 ###############################################################################################################################
+
 ##'Note that there are a series of procedures running to update tables by chuncks of 1000. This is due to system limitations'##
+
 ###############################################################################################################################
 
+ 
+
+ 
 
 use newdb;
 
+ 
+
 set foreign_key_checks = 0;
-insert ignore into newdb.books select * from cbmt.books;
+
+insert ignore into newdb.books select * from olddb.books;
+
 truncate newdb.conventions;
-insert ignore into newdb.conventions select * from cbmt.conventions;
+
+insert ignore into newdb.conventions select * from olddb.conventions;
+
 truncate newdb.depoccys;
-insert ignore into newdb.depoccys select * from cbmt.depoccys;
+
+insert ignore into newdb.depoccys select * from olddb.depoccys;
+
 truncate newdb.dllspecs;
-insert ignore into newdb.dllspecs select * from cbmt.dllspecs;
+
+insert ignore into newdb.dllspecs select * from olddb.dllspecs;
+
 truncate newdb.dlltemplatespecs;
-insert ignore into newdb.dlltemplatespecs select * from cbmt.dlltemplatespecs;
-insert ignore into newdb.fdknamefields select * from cbmt.fdknamefields;
-insert ignore into newdb.fee_ratefeeditems select * from cbmt.fee_ratefeeditems;
-insert ignore into newdb.fee_services select * from cbmt.fee_services;
+
+insert ignore into newdb.dlltemplatespecs select * from olddb.dlltemplatespecs;
+
+insert ignore into newdb.fdknamefields select * from olddb.fdknamefields;
+
+insert ignore into newdb.fee_ratefeeditems select * from olddb.fee_ratefeeditems;
+
+insert ignore into newdb.fee_services select * from olddb.fee_services;
+
 truncate newdb.forwardssets;
-insert ignore into newdb.forwardssets select * from cbmt.forwardssets;
+
+insert ignore into newdb.forwardssets select * from olddb.forwardssets;
+
 truncate newdb.fwdlayouts;
-insert ignore into newdb.fwdlayouts select * from cbmt.fwdlayouts;
+
+insert ignore into newdb.fwdlayouts select * from olddb.fwdlayouts;
+
 truncate newdb.holidays;
-insert ignore into newdb.holidays select * from cbmt.holidays;
-insert ignore into newdb.mandatorydlls select * from cbmt.mandatorydlls;
-insert ignore into newdb.names select * from cbmt.names;
+
+insert ignore into newdb.holidays select * from olddb.holidays;
+
+insert ignore into newdb.mandatorydlls select * from olddb.mandatorydlls;
+
+insert ignore into newdb.names select * from olddb.names;
+
 truncate newdb.prefs;
-insert ignore into newdb.prefs select * from cbmt.prefs;
+
+insert ignore into newdb.prefs select * from olddb.prefs;
+
 truncate newdb.rates;
-insert ignore into newdb.rates select * from cbmt.rates;
-insert ignore into newdb.reports select * from cbmt.reports;
+
+insert ignore into newdb.rates select * from olddb.rates;
+
+insert ignore into newdb.reports select * from olddb.reports;
+
 truncate newdb.scenarios;
-insert ignore into newdb.scenarios select * from cbmt.scenarios;
+
+insert ignore into newdb.scenarios select * from olddb.scenarios;
+
 truncate newdb.sec_accessrights;
-insert ignore into newdb.sec_accessrights select * from cbmt.sec_accessrights;
-insert ignore into newdb.sec_adminaccount select * from cbmt.sec_adminaccount;
-insert ignore into newdb.sec_adminpwdpolicy select * from cbmt.sec_adminpwdpolicy;
-insert ignore into newdb.sec_attribute select * from cbmt.sec_attribute;
-insert ignore into newdb.sec_securemodel select * from cbmt.sec_securemodel;
+
+insert ignore into newdb.sec_accessrights select * from olddb.sec_accessrights;
+
+insert ignore into newdb.sec_adminaccount select * from olddb.sec_adminaccount;
+
+insert ignore into newdb.sec_adminpwdpolicy select * from olddb.sec_adminpwdpolicy;
+
+insert ignore into newdb.sec_attribute select * from olddb.sec_attribute;
+
+insert ignore into newdb.sec_securemodel select * from olddb.sec_securemodel;
+
 update newdb.sec_securitystatus set securitystatus = 1;
-insert ignore into newdb.sources select * from cbmt.sources;
-insert ignore into newdb.spothistory select * from cbmt.spothistory;
+
+insert ignore into newdb.sources select * from olddb.sources;
+
+insert ignore into newdb.spothistory select * from olddb.spothistory;
+
 truncate newdb.spotlayouts;
-insert ignore into newdb.spotlayouts select * from cbmt.spotlayouts;
+
+insert ignore into newdb.spotlayouts select * from olddb.spotlayouts;
+
 truncate newdb.spots;
-insert ignore into newdb.spots select * from cbmt.spots;
-##insert ignore into newdb.structures select * from cbmt.structures; ####these are schemes
-insert ignore into newdb.traders select * from cbmt.traders;
+
+insert ignore into newdb.spots select * from olddb.spots;
+
+##insert ignore into newdb.structures select * from olddb.structures; ####these are schemes
+
+insert ignore into newdb.traders select * from olddb.traders;
+
 truncate newdb.userbooks;
-insert ignore into newdb.userbooks select * from cbmt.userbooks;
+
+insert ignore into newdb.userbooks select * from olddb.userbooks;
+
 truncate newdb.users;
-insert ignore into newdb.users select * from cbmt.users;
-##insert into newdb.userstrategies select * from cbmt.userstrategies; ####these are drop downs
-insert ignore into newdb.volsets select * from cbmt.volsets;
+
+insert ignore into newdb.users select * from olddb.users;
+
+##insert into newdb.userstrategies select * from olddb.userstrategies; ####these are drop downs
+
+insert ignore into newdb.volsets select * from olddb.volsets;
+
 truncate newdb.wingvols;
-insert ignore into newdb.wingvols select * from cbmt.wingvols;
+
+insert ignore into newdb.wingvols select * from olddb.wingvols;
+
 set foreign_key_checks = 1;
 
+ 
+
 #########################################################
+
 ##########'Delete any prior messed up tables'############
+
 #########################################################
+
+ 
 
 drop table if exists temp_tickets;
+
 drop table if exists renumber_tickets;
+
 drop table if exists temp_series;
+
 drop table if exists temp_dblink;
+
 drop table if exists temp_schedules;
+
 drop table if exists temp_fdktickets;
+
 drop procedure if exists update_temp_tickets;
+
 drop procedure if exists update_schedules;
+
 drop procedure if exists insert_temp_fdktickets;
+
 drop procedure if exists update_temp_fdktickets;
+
 drop procedure if exists update_custom1;
 
+ 
+
 #########################################################
+
 ############'Temporary tickets table creation'###########
+
 #########################################################
 
-create temporary table temp_tickets as select * from cbmt.tickets limit 0;
+ 
 
-insert into temp_tickets select * from cbmt.tickets where series in 
-	(select series from cbmt.tickets where status='Open' and instrument!='FENICS.Forex') 
-	and instrument!='FENICS.Forex'
+create temporary table temp_tickets as select * from olddb.tickets limit 0;
+
+ 
+
+insert into temp_tickets select * from olddb.tickets where series in
+
+                (select series from olddb.tickets where status='Open' and instrument!='FENICS.Forex')
+
+                and instrument!='FENICS.Forex'
+
     ;
 
-insert ignore into temp_tickets select * from cbmt.tickets where series in 
-	(select series from cbmt.tickets 
-		where status='Open' 
-		and instrument='FENICS.Forex'
-        and delDate > CURRENT_DATE) 
+ 
+
+insert ignore into temp_tickets select * from olddb.tickets where series in
+
+                (select series from olddb.tickets
+
+                                where status='Open'
+
+                                and instrument='FENICS.Forex'
+
+        and delDate > CURRENT_DATE)
+
     ;
-	
+
+               
+
+ 
 
 #######################################################
-##'Defines the mapping from old ticket number to new'##	
-#######################################################	
-	
+
+##'Defines the mapping from old ticket number to new'##           
+
+#######################################################        
+
+               
+
 set @row_number = 0;
+
 create temporary table renumber_tickets(
-	select (@row_number:=@row_number+1) as new_ticketnumber,
-			ticketnumber,
-			series,
-			0 as new_series,
-			dbtradelinknumber,
-			0 as new_dbtradelinknumber
-	from
-		temp_tickets
-	order by
-		ticketnumber);
-		
+
+                select (@row_number:=@row_number+1) as new_ticketnumber,
+
+                                                ticketnumber,
+
+                                                series,
+
+                                                0 as new_series,
+
+                                                dbtradelinknumber,
+
+                                                0 as new_dbtradelinknumber
+
+                from
+
+                                temp_tickets
+
+                order by
+
+                                ticketnumber);
+
+                               
+
 CREATE UNIQUE INDEX index_name ON renumber_tickets (new_ticketnumber,ticketnumber);
-        
+
+       
+
 ##'Set the new head ticket number'#
+
 create temporary table temp_series(select distinct series,0 as new_series from temp_tickets);
 
-update temp_series, renumber_tickets
-	set temp_series.new_series = renumber_tickets.new_ticketnumber
-	where temp_series.series = renumber_tickets.ticketnumber
-	and renumber_tickets.ticketnumber = renumber_tickets.series;
+ 
 
+update temp_series, renumber_tickets
+
+                set temp_series.new_series = renumber_tickets.new_ticketnumber
+
+                where temp_series.series = renumber_tickets.ticketnumber
+
+                and renumber_tickets.ticketnumber = renumber_tickets.series;
+
+ 
+
+ 
 
 update renumber_tickets, temp_series
-	set renumber_tickets.new_series = temp_series.new_series
-	where renumber_tickets.series = temp_series.series;
-    
+
+                set renumber_tickets.new_series = temp_series.new_series
+
+                where renumber_tickets.series = temp_series.series;
+
+   
+
 drop table temp_series;
-    
+
+   
+
 ##'Set the new tradeline numbers'##
+
 create temporary table temp_dblink(select new_ticketnumber, ticketnumber from renumber_tickets);
 
+ 
+
 update renumber_tickets, temp_dblink
-	set renumber_tickets.new_dbtradelinknumber = temp_dblink.new_ticketnumber
-	where renumber_tickets.dbtradelinknumber = temp_dblink.ticketnumber;
-    
+
+                set renumber_tickets.new_dbtradelinknumber = temp_dblink.new_ticketnumber
+
+                where renumber_tickets.dbtradelinknumber = temp_dblink.ticketnumber;
+
+   
+
 drop table temp_dblink;
 
+ 
+
 ##'Update the tickets with all the mappings defined above'##
+
 delimiter $$
+
 create procedure update_temp_tickets()
+
     BEGIN
-		declare i int;
+
+                                declare i int;
+
         select 0 into i;
-		tickets:loop
-			if (select max(new_ticketnumber) from renumber_tickets) >i then
-				update temp_tickets
-					inner join
-						(select * from renumber_tickets 
-								group by new_ticketnumber 
-								having new_ticketnumber between i and i+999) as narwhal
-					on temp_tickets.ticketnumber = narwhal.ticketnumber
-				set temp_tickets.series = narwhal.new_series,
-					temp_tickets.dbtradelinknumber = narwhal.new_dbtradelinknumber,
-					temp_tickets.ticketnumber = narwhal.new_ticketnumber,
+
+                                tickets:loop
+
+                                                if (select max(new_ticketnumber) from renumber_tickets) >i then
+
+                                                                update temp_tickets
+
+                                                                                inner join
+
+                                                                                                (select * from renumber_tickets
+
+                                                                                                                                group by new_ticketnumber
+
+                                                                                                                                having new_ticketnumber between i and i+999) as narwhal
+
+                                                                                on temp_tickets.ticketnumber = narwhal.ticketnumber
+
+                                                                set temp_tickets.series = narwhal.new_series,
+
+                                                                                temp_tickets.dbtradelinknumber = narwhal.new_dbtradelinknumber,
+
+                                                                                temp_tickets.ticketnumber = narwhal.new_ticketnumber,
+
                     temp_tickets.OriginNum = narwhal.new_ticketnumber;
-				select i+1000 into i;
-			else
-				leave tickets;
-			end if;
-		end loop;
+
+                                                                select i+1000 into i;
+
+                                                else
+
+                                                                leave tickets;
+
+                                                end if;
+
+                                end loop;
+
 end$$
 
+ 
+
 delimiter ;
-	
+
+               
+
 call update_temp_tickets;
-    
+
+   
+
 ######################################################################################
+
 ##'The temp_tickets table is now correct and can be inserted into the tickets table'##
+
 ######################################################################################
+
+ 
 
 insert into newdb.tickets select * from temp_tickets;
+
 drop table temp_tickets;
 
+ 
+
 ##'Link premiums to self'##
-update newdb.tickets 
-	set dbpremiumlinkishidden = 0,
-		dbpremiumlinknumber = TicketNumber;
+
+update newdb.tickets
+
+                set dbpremiumlinkishidden = 0,
+
+                                dbpremiumlinknumber = TicketNumber;
+
+ 
 
 ####################################################################################
+
 ###########'Update the schedule with all of the mappings defined above'#############
+
 ####################################################################################
 
-create temporary table temp_schedules as select * from cbmt.schedules limit 0;
+ 
 
-insert into temp_schedules select * from cbmt.schedules where ticketnumber in 
-	(select ticketnumber from cbmt.tickets where status='Open')
+create temporary table temp_schedules as select * from olddb.schedules limit 0;
+
+ 
+
+insert into temp_schedules select * from olddb.schedules where ticketnumber in
+
+                (select ticketnumber from olddb.tickets where status='Open')
+
     ;
-	
+
+               
+
 delimiter $$
+
 create procedure update_schedules()
+
     BEGIN
-		declare i int;
+
+                                declare i int;
+
         select 0 into i;
-		schedules:loop
-			if (select max(new_ticketnumber) from renumber_tickets) >i then
-				update temp_schedules
-					inner join
-						(select * from renumber_tickets 
-								group by new_ticketnumber 
-								having new_ticketnumber between i and i+999) as narwhal
-					on temp_schedules.ticketnumber = narwhal.ticketnumber
-				set temp_schedules.ticketnumber = narwhal.new_ticketnumber;
-				select i+1000 into i;
-			else
-				leave schedules;
-			end if;
-		end loop;
+
+                                schedules:loop
+
+                                                if (select max(new_ticketnumber) from renumber_tickets) >i then
+
+                                                                update temp_schedules
+
+                                                                                inner join
+
+                                                                                                (select * from renumber_tickets
+
+                                                                                                                                group by new_ticketnumber
+
+                                                                                                                                having new_ticketnumber between i and i+999) as narwhal
+
+                                                                                on temp_schedules.ticketnumber = narwhal.ticketnumber
+
+                                                                set temp_schedules.ticketnumber = narwhal.new_ticketnumber;
+
+                                                                select i+1000 into i;
+
+                                                else
+
+                                                                leave schedules;
+
+                                                end if;
+
+                                end loop;
+
 end$$
+
+ 
 
 delimiter ;
 
+ 
+
 call update_schedules;
-	
+
+               
+
 ##########################################################################################
+
 ##'The temp_schedules table is now correct and can be inserted into the schedules table'##
+
 ##########################################################################################
+
+ 
 
 insert into newdb.schedules select * from temp_schedules;
+
 drop table temp_schedules;
 
+ 
+
 #########################################################################################
+
 ####################'Update cutomizations to the new ticket number'######################
+
 #########################################################################################
 
-select * from renumber_tickets;
+ 
 
-create temporary table temp_fdktickets as select * from cbmt.fdkticketfields limit 0;
+ 
+
+create temporary table temp_fdktickets as select * from olddb.fdkticketfields limit 0;
+
+ 
 
 #show index from temp_fdktickets;
 
+ 
+
 insert into temp_fdktickets
-	select * from cbmt.fdkticketfields
-			where cbmt.fdkticketfields.ticketnumber
-				in (select ticketnumber from renumber_tickets)
-				and cbmt.fdkticketfields.ishidden=0;
+
+                select * from olddb.fdkticketfields
+
+                                                where olddb.fdkticketfields.ticketnumber
+
+                                                                in (select ticketnumber from renumber_tickets)
+
+                                                                and olddb.fdkticketfields.ishidden=0;
+
+ 
 
 delimiter $$
+
 create procedure update_temp_fdktickets()
+
     BEGIN
-		declare i int;
+
+                                declare i int;
+
         select 0 into i;
-		fdk:loop
-			if (select max(new_ticketnumber) from renumber_tickets) >i then
-				update temp_fdktickets
-					inner join
-						(select * from renumber_tickets 
-								group by new_ticketnumber 
-								having new_ticketnumber between i and i+999
+
+                                fdk:loop
+
+                                                if (select max(new_ticketnumber) from renumber_tickets) >i then
+
+                                                                update temp_fdktickets
+
+                                                                                inner join
+
+                                                                                                (select * from renumber_tickets
+
+                                                                                                                                group by new_ticketnumber
+
+                                                                                                                                having new_ticketnumber between i and i+999
+
                                 order by new_ticketnumber) as narwhal
-					on temp_fdktickets.ticketnumber = narwhal.ticketnumber
+
+                                                                                on temp_fdktickets.ticketnumber = narwhal.ticketnumber
+
                     and ishidden=0
-				set temp_fdktickets.ticketnumber = narwhal.new_ticketnumber;
-				select i+1000 into i;
-			else
-				leave fdk;
-			end if;
-		end loop;
+
+                                                                set temp_fdktickets.ticketnumber = narwhal.new_ticketnumber;
+
+                                                                select i+1000 into i;
+
+                                                else
+
+                                                                leave fdk;
+
+                                                end if;
+
+                                end loop;
+
 end$$
 
+ 
+
 delimiter ;
+
+ 
 
 call update_temp_fdktickets;
 
-#########################################################################################
-############'Create Audit Trail of Ticket number to store in custom 1'###################
+ 
+
 #########################################################################################
 
+############'Create Audit Trail of Ticket number to store in custom 1'###################
+
+#########################################################################################
+
+ 
+
 delimiter $$
+
 create procedure update_custom1()
+
     BEGIN
-		declare i int;
-		select 1 into i;
-		while i<= (select max(new_ticketnumber) from renumber_tickets) DO
-				insert into `temp_fdktickets` (`ticketnumber`,`ishidden`,`entity`,`fieldname`,`string`)
-					value(i,0,'b62ef6a8-69ad-102b-abf5-d52d5f5692da','RPTCLFIELDS.CustomFld1',
-							(select ticketnumber from renumber_tickets where new_ticketnumber = i));
-				set i =  i+1;
-		end while;
+
+                                declare i int;
+
+                                select 1 into i;
+
+                                while i<= (select max(new_ticketnumber) from renumber_tickets) DO
+
+                                                                insert into `temp_fdktickets` (`ticketnumber`,`ishidden`,`entity`,`fieldname`,`string`)
+
+                                                                                value(i,0,'b62ef6a8-69ad-102b-abf5-d52d5f5692da','RPTCLFIELDS.CustomFld1',
+
+                                                                                                                (select ticketnumber from renumber_tickets where new_ticketnumber = i));
+
+                                                                set i =  i+1;
+
+                                end while;
+
 end$$
+
 delimiter ;
+
+ 
 
 call update_custom1;
 
+ 
+
 ###########################################################################################
+
 ##'The temp_fdktickets table is now correct and can be inserted into the fdkticket table'##
+
 ###########################################################################################
+
+ 
 
 insert into newdb.fdkticketfields select * from temp_fdktickets;
+
 drop table temp_fdktickets;
+
 drop table renumber_tickets;
 
+ 
+
 ##'Set ticket counters'##
+
 update newdb.ticketnumber
-	set initialticketnumber=1,
-		lastticketnumber = (select count(newdb.tickets.ticketnumber) from newdb.tickets)
+
+                set initialticketnumber=1,
+
+                                lastticketnumber = (select count(newdb.tickets.ticketnumber) from newdb.tickets)
+
         ;
